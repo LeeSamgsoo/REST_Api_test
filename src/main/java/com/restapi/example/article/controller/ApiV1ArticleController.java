@@ -14,10 +14,11 @@ import java.util.List;
 @RequestMapping("/api/v1/articles")
 public class ApiV1ArticleController {
     private final ArticleService articleService;
+    private List<ArticleDTO> articleDTOList;
 
     @GetMapping("")
     public List<ArticleDTO> list() {
-        List<ArticleDTO> articleDTOList = new ArrayList<>();
+        articleDTOList = new ArrayList<>();
         articleDTOList.add(new ArticleDTO(new Article("제목1", "내용1")));
         articleDTOList.add(new ArticleDTO(new Article("제목2", "내용2")));
         articleDTOList.add(new ArticleDTO(new Article("제목3", "내용3")));
@@ -26,22 +27,28 @@ public class ApiV1ArticleController {
     }
 
     @GetMapping("/{id}")
-    public ArticleDTO getArticle() {
-        return new ArticleDTO(new Article("제목", "내용"));
+    public ArticleDTO getArticle(@PathVariable("id") Long id) {
+        return articleDTOList.get(Math.toIntExact(id));
     }
 
     @PostMapping("")
-    public String create() {
-        return "";
+    public ArticleDTO create(@RequestParam("subject") String subject,
+                         @RequestParam("content") String content) {
+        return new ArticleDTO(new Article(subject, content));
     }
 
     @PatchMapping("/{id}")
-    public String modify() {
-        return "";
+    public String modify(@RequestParam("subject") String subject,
+                         @RequestParam("content") String content,
+                         @PathVariable("id") Long id) {
+        System.out.println(subject);
+        System.out.println(content);
+        return id + "번 수정성공";
     }
 
     @DeleteMapping("/{id}")
-    public String delete() {
-        return "";
+    public String delete(@PathVariable("id") Long id) {
+        System.out.println(id + "삭제 됨");
+        return id + "번 삭제성공";
     }
 }
