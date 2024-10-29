@@ -2,10 +2,13 @@ package com.restapi.example.article.controller;
 
 import com.restapi.example.article.dto.ArticleDTO;
 import com.restapi.example.article.entity.Article;
+import com.restapi.example.article.request.ArticleCreateRequest;
+import com.restapi.example.article.request.ArticleModifyRequest;
+import com.restapi.example.article.response.ArticleResponse;
+import com.restapi.example.article.response.ArticlesResponse;
 import com.restapi.example.article.service.ArticleService;
 import com.restapi.example.global.RsData.RsData;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,27 +20,6 @@ import java.util.List;
 @RequestMapping("/api/v1/articles")
 public class ApiV1ArticleController {
     private final ArticleService articleService;
-    private List<ArticleDTO> articleDTOList;
-
-    @Getter
-    @AllArgsConstructor
-    public static class ArticlesResponse {
-        private final List<ArticleDTO> articleList;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class ArticleResponse {
-        private final ArticleDTO article;
-    }
-
-    @Data
-    public static class ArticleRequest {
-        @NotBlank
-        private String subject;
-        @NotBlank
-        private String content;
-    }
 
     @GetMapping("")
     public RsData<ArticlesResponse> list() {
@@ -62,17 +44,17 @@ public class ApiV1ArticleController {
     }
 
     @PostMapping("")
-    public String create(@Valid @RequestBody ArticleRequest articleRequest) {
-        System.out.println(articleRequest.getSubject());
-        System.out.println(articleRequest.getContent());
+    public String create(@Valid @RequestBody ArticleCreateRequest articleCreateRequest) {
+        System.out.println(articleCreateRequest.getSubject());
+        System.out.println(articleCreateRequest.getContent());
         return "등록완료";
     }
 
     @PatchMapping("/{id}")
-    public String modify(@PathVariable("id") Long id, @Valid @RequestBody ArticleRequest articleRequest) {
+    public String modify(@PathVariable("id") Long id, @Valid @RequestBody ArticleModifyRequest articleModifyRequest) {
         System.out.println(id);
-        System.out.println(articleRequest.getSubject());
-        System.out.println(articleRequest.getContent());
+        System.out.println(articleModifyRequest.getSubject());
+        System.out.println(articleModifyRequest.getContent());
         return "수정완료";
     }
 
