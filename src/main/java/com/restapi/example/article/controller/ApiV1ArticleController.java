@@ -4,9 +4,9 @@ import com.restapi.example.article.dto.ArticleDTO;
 import com.restapi.example.article.entity.Article;
 import com.restapi.example.article.service.ArticleService;
 import com.restapi.example.global.RsData.RsData;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -29,6 +29,14 @@ public class ApiV1ArticleController {
     @AllArgsConstructor
     public static class ArticleResponse {
         private final ArticleDTO article;
+    }
+
+    @Data
+    public static class ArticleRequest {
+        @NotBlank
+        private String subject;
+        @NotBlank
+        private String content;
     }
 
     @GetMapping("")
@@ -54,17 +62,17 @@ public class ApiV1ArticleController {
     }
 
     @PostMapping("")
-    public String create(@RequestParam("subject") String subject, @RequestParam("content") String content) {
-        System.out.println(subject);
-        System.out.println(content);
+    public String create(@Valid @RequestBody ArticleRequest articleRequest) {
+        System.out.println(articleRequest.getSubject());
+        System.out.println(articleRequest.getContent());
         return "등록완료";
     }
 
     @PatchMapping("/{id}")
-    public String modify(@PathVariable("id") Long id, @RequestParam("subject") String subject, @RequestParam("content") String content) {
+    public String modify(@PathVariable("id") Long id, @Valid @RequestBody ArticleRequest articleRequest) {
         System.out.println(id);
-        System.out.println(subject);
-        System.out.println(content);
+        System.out.println(articleRequest.getSubject());
+        System.out.println(articleRequest.getContent());
         return "수정완료";
     }
 
