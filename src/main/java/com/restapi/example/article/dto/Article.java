@@ -17,4 +17,5 @@ import lombok.experimental.SuperBuilder;
 public class Article extends BaseEntity {
     private String subject;
     private String content;
+    private String secretDummyData;
 }
