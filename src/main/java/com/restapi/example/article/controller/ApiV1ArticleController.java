@@ -11,8 +11,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,54 +27,74 @@ public class ApiV1ArticleController {
 
     @GetMapping("")
     @Operation(summary = "게시글 다건 조회")
-    public RsData<ArticlesResponse> viewAll() {
-        return RsData.of("200", "게시글 다건 조회 성공",
+    @ResponseBody
+    public ResponseEntity<List<ArticleDTO>> /*RsData<ArticleResponse>*/ viewAll() {
+        return ResponseEntity.ok(this.articleService.readAll().stream()
+                .map(ArticleDTO::new).collect(Collectors.toList()));
+        /*return RsData.of("200", "게시글 다건 조회 성공",
                 new ArticlesResponse(this.articleService.readAll().stream()
-                        .map(ArticleDTO::new).collect(Collectors.toList())));
+                        .map(ArticleDTO::new).collect(Collectors.toList())));*/
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "게시글 단건 조회")
-    public RsData<ArticleResponse> viewOne(@PathVariable(value = "id") Long id) {
+    @ResponseBody
+    public ResponseEntity<ArticleDTO> /*RsData<ArticleResponse>*/ viewOne(@PathVariable(value = "id") Long id) {
         Article article = this.articleService.readOne(id);
         if (article == null) {
-            return RsData.of("500", "%d번 게시글은 존재하지 않습니다.".formatted(id));
+            return ResponseEntity.badRequest().build();
+            /*return RsData.of("500", "%d번 게시글은 존재하지 않습니다.".formatted(id));*/
         }
-        return RsData.of("200", "게시글 단건 조회 성공",
-                new ArticleResponse(new ArticleDTO(article)));
+        return ResponseEntity.ok(new ArticleDTO(article));
+        /*return RsData.of("200", "게시글 단건 조회 성공",
+                new ArticleResponse(new ArticleDTO(article)));*/
     }
 
     @PostMapping("")
     @Operation(summary = "게시글 생성")
-    public RsData<ArticleResponse> createOne(@Valid @RequestBody ArticleRequest articleRequest) {
-        return RsData.of("200", "게시글 생성 성공",
+    @ResponseBody
+    public ResponseEntity<ArticleDTO> /*RsData<ArticleResponse>*/ createOne(@Valid @RequestBody ArticleRequest articleRequest) {
+        return ResponseEntity.created(URI.create("생성성공")).
+                body(this.articleService.createOne(
+                        articleRequest.getSubject(), articleRequest.getContent()
+                ));
+        /*return RsData.of("200", "게시글 생성 성공",
                 new ArticleResponse(this.articleService.createOne(
-                        articleRequest.getSubject(), articleRequest.getContent())));
+                        articleRequest.getSubject(), articleRequest.getContent())));*/
     }
 
     @PatchMapping("/{id}")
     @Operation(summary = "게시글 수정")
-    public RsData<ArticleResponse> modifyOne(@PathVariable(value = "id") Long id,
+    @ResponseBody
+    public ResponseEntity<ArticleDTO> /*RsData<ArticleResponse>*/ modifyOne(@PathVariable(value = "id") Long id,
                                              @Valid @RequestBody ArticleRequest articleRequest) {
         Article article = this.articleService.readOne(id);
         if (article == null) {
-            return RsData.of("500", "%d번 게시글은 존재하지 않습니다.".formatted(id));
+            return ResponseEntity.badRequest().build();
+            /*return RsData.of("500", "%d번 게시글은 존재하지 않습니다.".formatted(id));*/
         }
 
-        return RsData.of("200", "게시글 수정 성공",
+        return ResponseEntity.accepted().body(
+                this.articleService.modifyOne(
+                        article, articleRequest.getSubject(), articleRequest.getContent()
+                ));
+       /* return RsData.of("200", "게시글 수정 성공",
                 new ArticleResponse(this.articleService.modifyOne(
-                        article, articleRequest.getSubject(), articleRequest.getContent())));
+                        article, articleRequest.getSubject(), articleRequest.getContent())));*/
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "게시글 삭제")
-    public RsData<ArticleResponse> deleteOne(@PathVariable(value = "id") Long id) {
+    @ResponseBody
+    public ResponseEntity<ArticleDTO> /*RsData<ArticleResponse>*/ deleteOne(@PathVariable(value = "id") Long id) {
         Article article = this.articleService.readOne(id);
         if (article == null) {
-            return RsData.of("500", "%d번 게시글은 존재하지 않습니다.".formatted(id));
+            return ResponseEntity.badRequest().build();
+            /*return RsData.of("500", "%d번 게시글은 존재하지 않습니다.".formatted(id));*/
         }
 
-        return RsData.of("200", "게시글 삭제 성공",
-                new ArticleResponse(this.articleService.deleteOne(article)));
+        return ResponseEntity.accepted().body(this.articleService.deleteOne(article));
+        /*return RsData.of("200", "게시글 삭제 성공",
+                new ArticleResponse(this.articleService.deleteOne(article)));*/
     }
 }
