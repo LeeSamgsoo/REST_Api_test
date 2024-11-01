@@ -31,6 +31,16 @@ public class ArticleService {
         return new ArticleDTO(article);
     }
 
+    public ArticleDTO createOne(String subject, String content, Member member) {
+        Article article = Article.builder()
+                .subject(subject)
+                .content(content)
+                .member(member)
+                .build();
+        this.articleRepository.save(article);
+        return new ArticleDTO(article);
+    }
+
     public ArticleDTO modifyOne(Article article, String subject, String content) {
         Article modifiedArticle = article.toBuilder()
                 .subject(subject)
