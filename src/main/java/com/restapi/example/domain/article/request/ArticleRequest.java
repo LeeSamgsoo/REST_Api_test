@@ -1,4 +1,4 @@
-package com.restapi.example.article.request;
+package com.restapi.example.domain.article.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

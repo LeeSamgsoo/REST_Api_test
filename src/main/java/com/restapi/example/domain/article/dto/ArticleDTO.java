@@ -1,5 +1,6 @@
-package com.restapi.example.article.dto;
+package com.restapi.example.domain.article.dto;
 
+import com.restapi.example.domain.article.entity.Article;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ public class ArticleDTO {
     private String content;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
+    private String author;
 
     public ArticleDTO(Article article) {
         this.id = article.getId();
@@ -18,5 +20,6 @@ public class ArticleDTO {
         this.content = article.getContent();
         this.createdDate = article.getCreatedDate();
         this.modifiedDate = article.getModifiedDate();
+        //this.author = article.getMember().getUsername();
     }
 }

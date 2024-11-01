@@ -1,7 +1,9 @@
-package com.restapi.example.article.dto;
+package com.restapi.example.domain.article.entity;
 
+import com.restapi.example.domain.member.entity.Member;
 import com.restapi.example.global.jpa.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +19,6 @@ import lombok.experimental.SuperBuilder;
 public class Article extends BaseEntity {
     private String subject;
     private String content;
-    private String secretDummyData;
+    @ManyToOne
+    private Member member;
 }

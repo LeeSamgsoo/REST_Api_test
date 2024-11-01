@@ -1,8 +1,9 @@
-package com.restapi.example.article.service;
+package com.restapi.example.domain.article.service;
 
-import com.restapi.example.article.dto.Article;
-import com.restapi.example.article.dto.ArticleDTO;
-import com.restapi.example.article.repository.ArticleRepository;
+import com.restapi.example.domain.article.entity.Article;
+import com.restapi.example.domain.article.dto.ArticleDTO;
+import com.restapi.example.domain.article.repository.ArticleRepository;
+import com.restapi.example.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

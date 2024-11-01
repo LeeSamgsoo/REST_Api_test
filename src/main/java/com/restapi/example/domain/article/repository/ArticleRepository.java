@@ -1,6 +1,6 @@
-package com.restapi.example.article.repository;
+package com.restapi.example.domain.article.repository;
 
-import com.restapi.example.article.dto.Article;
+import com.restapi.example.domain.article.entity.Article;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {

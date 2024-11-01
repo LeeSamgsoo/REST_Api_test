@@ -1,12 +1,9 @@
-package com.restapi.example.article.controller;
+package com.restapi.example.domain.article.controller;
 
-import com.restapi.example.article.dto.Article;
-import com.restapi.example.article.dto.ArticleDTO;
-import com.restapi.example.article.request.ArticleRequest;
-import com.restapi.example.article.response.ArticleResponse;
-import com.restapi.example.article.response.ArticlesResponse;
-import com.restapi.example.article.service.ArticleService;
-import com.restapi.example.global.RsData.RsData;
+import com.restapi.example.domain.article.entity.Article;
+import com.restapi.example.domain.article.dto.ArticleDTO;
+import com.restapi.example.domain.article.request.ArticleRequest;
+import com.restapi.example.domain.article.service.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
