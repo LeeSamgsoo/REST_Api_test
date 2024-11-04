@@ -18,7 +18,6 @@ import java.util.Map;
 public class JwtProvider {
     @Value("${custom.jwt.secretKey}")
     private String secretKeyOrigin;
-
     private SecretKey cachedSecretKey;
 
     public SecretKey getSecretKey() {
@@ -31,7 +30,15 @@ public class JwtProvider {
         return Keys.hmacShaKeyFor(keyBase64Encoded.getBytes());
     }
 
-    public String generateAccessToken(Member member, int seconds) {
+    public String genRefreshToken(Member member) {
+        return genToken(member, 60 * 60 * 24 * 365 * 1);
+    }
+
+    public String genAccessToken(Member member) {
+        return genToken(member, 30);
+    }
+
+    public String genToken(Member member, int seconds) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", member.getId());
         claims.put("username", member.getUsername());
@@ -42,5 +49,27 @@ public class JwtProvider {
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(getSecretKey(), SignatureAlgorithm.HS512)
                 .compact();
+    }
+
+    public boolean verify(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(getSecretKey())
+                    .build()
+                    .parseClaimsJws(token);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public Map<String, Object> getClaims(String token) {
+        String body = Jwts.parserBuilder()
+                .setSigningKey(getSecretKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("body", String.class);
+        return Util.toMap(body);
     }
 }

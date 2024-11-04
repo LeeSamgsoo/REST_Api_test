@@ -5,16 +5,18 @@ import com.restapi.example.domain.member.entity.Member;
 import com.restapi.example.domain.member.request.MemberRequest;
 import com.restapi.example.domain.member.response.MemberResponse;
 import com.restapi.example.domain.member.service.MemberService;
+import com.restapi.example.global.RsData.RsData;
 import com.restapi.example.global.jwt.JwtProvider;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 
 @RestController
@@ -33,14 +35,51 @@ public class ApiV1MemberController {
     }
 
     @PostMapping("/login")
-    public String login() {
-        Member member = memberService.getOne("admin");
-        return jwtProvider.generateAccessToken(member, 10);
+    public RsData<MemberResponse> login(@Valid @RequestBody MemberRequest memberRequest, HttpServletResponse resp) {
+        Member member = this.memberService.getOne(memberRequest.getUsername());
+        String accessToken = jwtProvider.genAccessToken(member);
+        resp.addHeader("accessToken", accessToken);
+        Cookie cookie = new Cookie("accessToken", accessToken);
+        resp.addCookie(cookie);
+        return RsData.of("200", accessToken, new MemberResponse(new MemberDTO(member)));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession httpSession) {
-        httpSession.invalidate();
-        return ResponseEntity.ok("로그아웃 성공");
+    @GetMapping("/me")
+    public RsData<MemberResponse> me(HttpServletRequest req) {
+        Cookie[] cookies = req.getCookies();
+        String accessToken = "";
+        for (Cookie cookie : cookies) {
+            if ("accessToken".equals(cookie.getName())) {
+                accessToken = cookie.getValue();
+            }
+        }
+
+        boolean checkedToken = jwtProvider.verify(accessToken);
+
+        if (!checkedToken) {
+            return RsData.of("500", "토큰이 유효하지 않습니다.", null);
+        }
+
+        Map<String, Object> claims = jwtProvider.getClaims(accessToken);
+        String username = (String) claims.get("username");
+        Member member = this.memberService.getOne(username);
+        return RsData.of("200", accessToken, new MemberResponse(new MemberDTO(member)));
+    }
+
+    @GetMapping("/logout")
+    public RsData<?> logout(HttpServletResponse res, HttpServletRequest req) {
+        Cookie[] cookies = req.getCookies();
+        String accessToken = "";
+        Cookie cookie = null;
+        for (Cookie cook : cookies) {
+            if ("accessToken".equals(cook.getName())) {
+                accessToken = cook.getValue();
+                cookie = cook;
+            }
+        }
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        res.addCookie(cookie);
+        return RsData.of("200", "로그아웃 성공");
     }
 }
