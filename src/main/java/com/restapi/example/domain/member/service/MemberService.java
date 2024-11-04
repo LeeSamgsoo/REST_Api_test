@@ -27,7 +27,7 @@ public class MemberService {
         return member;
     }
 
-    public Member getOne(String username, String password) {
+    public Member getOne(String username) {
         Member member = this.memberRepository.findByUsername(username);
         if (member == null) {
             throw new RuntimeException("존재하지 않는 사용자입니다.");
