@@ -35,7 +35,7 @@ public class JwtProvider {
     }
 
     public String genAccessToken(Member member) {
-        return genToken(member, 30);
+        return genToken(member, 10);
     }
 
     public String genToken(Member member, int seconds) {

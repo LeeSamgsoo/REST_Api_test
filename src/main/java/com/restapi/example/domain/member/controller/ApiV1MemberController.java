@@ -37,10 +37,23 @@ public class ApiV1MemberController {
     @PostMapping("/login")
     public RsData<MemberResponse> login(@Valid @RequestBody MemberRequest memberRequest, HttpServletResponse resp) {
         Member member = this.memberService.getOne(memberRequest.getUsername());
+
         String accessToken = jwtProvider.genAccessToken(member);
-        resp.addHeader("accessToken", accessToken);
         Cookie cookie = new Cookie("accessToken", accessToken);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         resp.addCookie(cookie);
+
+        String refreshToken = member.getRefreshToken();
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(60 * 60);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        resp.addCookie(refreshTokenCookie);
+
         return RsData.of("200", accessToken, new MemberResponse(new MemberDTO(member)));
     }
 
@@ -68,18 +81,16 @@ public class ApiV1MemberController {
 
     @GetMapping("/logout")
     public RsData<?> logout(HttpServletResponse res, HttpServletRequest req) {
-        Cookie[] cookies = req.getCookies();
-        String accessToken = "";
-        Cookie cookie = null;
-        for (Cookie cook : cookies) {
-            if ("accessToken".equals(cook.getName())) {
-                accessToken = cook.getValue();
-                cookie = cook;
-            }
-        }
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        res.addCookie(cookie);
+        Cookie accessTokenCookie = new Cookie("accessToken", null);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(0);
+        res.addCookie(accessTokenCookie);
+
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(0);
+        res.addCookie(refreshTokenCookie);
+
         return RsData.of("200", "로그아웃 성공");
     }
 }
