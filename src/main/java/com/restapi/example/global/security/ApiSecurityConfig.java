@@ -16,22 +16,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class ApiSecurityConfig {
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
-
     @Bean
     SecurityFilterChain apifilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/api/**")
-                .authorizeHttpRequests(
-                        authorizeHttpRequests -> authorizeHttpRequests
+                .authorizeRequests(
+                        authorizeRequests -> authorizeRequests
                                 .requestMatchers(HttpMethod.GET, "/api/*/articles").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/*/articles/*").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/*/members/login").permitAll() // 로그인은 누구나 가능, post 요청만 허용
                                 .requestMatchers(HttpMethod.GET, "/api/*/members/logout").permitAll() // 로그인은 누구나 가능, post 요청만 허용
                                 .anyRequest().authenticated()
                 )
-                .csrf(AbstractHttpConfigurer::disable/*== csrf -> csrf.disable()*/) // csrf 토큰 끄기
-                .httpBasic(AbstractHttpConfigurer::disable/*== httpBasic -> httpBasic.disable()*/) // httpBasic 로그인 방식 끄기
-                .formLogin(AbstractHttpConfigurer::disable/*== formLogin -> formLogin.disable()*/) // 폼 로그인 방식 끄기
+                .csrf(
+                        csrf -> csrf
+                                .disable()
+                ) // csrf 토큰 끄기
+                .httpBasic(
+                        httpBasic -> httpBasic.disable()
+                ) // httpBasic 로그인 방식 끄기
+                .formLogin(
+                        formLogin -> formLogin.disable()
+                ) // 폼 로그인 방식 끄기
                 .sessionManagement(
                         sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )

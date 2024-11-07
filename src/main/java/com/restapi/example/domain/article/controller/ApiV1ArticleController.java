@@ -3,7 +3,10 @@ package com.restapi.example.domain.article.controller;
 import com.restapi.example.domain.article.entity.Article;
 import com.restapi.example.domain.article.dto.ArticleDTO;
 import com.restapi.example.domain.article.request.ArticleRequest;
+import com.restapi.example.domain.article.response.ArticleResponse;
+import com.restapi.example.domain.article.response.ArticlesResponse;
 import com.restapi.example.domain.article.service.ArticleService;
+import com.restapi.example.global.RsData.RsData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,12 +28,12 @@ public class ApiV1ArticleController {
     @GetMapping("")
     @Operation(summary = "게시글 다건 조회")
     @ResponseBody
-    public ResponseEntity<List<ArticleDTO>> /*RsData<ArticleResponse>*/ viewAll() {
-        return ResponseEntity.ok(this.articleService.readAll().stream()
-                .map(ArticleDTO::new).collect(Collectors.toList()));
-        /*return RsData.of("200", "게시글 다건 조회 성공",
+    public /*ResponseEntity<List<ArticleDTO>>*/ RsData<ArticlesResponse> viewAll() {
+        /*return ResponseEntity.ok(this.articleService.readAll().stream()
+                .map(ArticleDTO::new).collect(Collectors.toList()));*/
+        return RsData.of("200", "게시글 다건 조회 성공",
                 new ArticlesResponse(this.articleService.readAll().stream()
-                        .map(ArticleDTO::new).collect(Collectors.toList())));*/
+                        .map(ArticleDTO::new).collect(Collectors.toList())));
     }
 
     @GetMapping("/{id}")
