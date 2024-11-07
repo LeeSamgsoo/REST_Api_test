@@ -39,15 +39,15 @@ public class ApiV1ArticleController {
     @GetMapping("/{id}")
     @Operation(summary = "게시글 단건 조회")
     @ResponseBody
-    public ResponseEntity<ArticleDTO> /*RsData<ArticleResponse>*/ viewOne(@PathVariable(value = "id") Long id) {
+    public /*ResponseEntity<ArticleDTO>*/ RsData<ArticleResponse> viewOne(@PathVariable(value = "id") Long id) {
         Article article = this.articleService.readOne(id);
         if (article == null) {
-            return ResponseEntity.badRequest().build();
-            /*return RsData.of("500", "%d번 게시글은 존재하지 않습니다.".formatted(id));*/
+            /*return ResponseEntity.badRequest().build();*/
+            return RsData.of("500", "%d번 게시글은 존재하지 않습니다.".formatted(id));
         }
-        return ResponseEntity.ok(new ArticleDTO(article));
-        /*return RsData.of("200", "게시글 단건 조회 성공",
-                new ArticleResponse(new ArticleDTO(article)));*/
+        /*return ResponseEntity.ok(new ArticleDTO(article));*/
+        return RsData.of("200", "게시글 단건 조회 성공",
+                new ArticleResponse(new ArticleDTO(article)));
     }
 
     @PostMapping("")
