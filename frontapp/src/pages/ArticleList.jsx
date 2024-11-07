@@ -18,7 +18,7 @@ function ArticleList() {
             <ul>
                 {articleList.map((article) => (
                     <li key={article.id}>
-                        <Link to="/article/detail/${article.id}">게시글 조회</Link>
+                        <Link to={`/article/detail/${article.id}`}>게시글 조회</Link>
                         {article.id} / {article.subject} / {article.content} / {article.author}
                     </li>
                 ))}
